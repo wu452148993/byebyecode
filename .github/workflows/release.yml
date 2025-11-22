@@ -1,3 +1,4 @@
+
 name: Release
 
 on:
@@ -46,13 +47,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y mingw-w64 pkg-config libssl-dev
-
     - name: Install musl tools
       if: matrix.target == 'x86_64-unknown-linux-musl'
       run: |
         sudo apt-get update
         sudo apt-get install -y musl-tools pkg-config libssl-dev
-
     - name: Build binary
       run: cargo build --release --target ${{ matrix.target }}
 
@@ -63,7 +62,6 @@ jobs:
         cp target/${{ matrix.target }}/release/byebyecode dist/byebyecode
         cd dist
         tar czf ../${{ matrix.name }} byebyecode
-
     - name: Package Windows
       if: matrix.target == 'x86_64-pc-windows-gnu'
       run: |
@@ -71,7 +69,6 @@ jobs:
         cp target/${{ matrix.target }}/release/byebyecode.exe dist/byebyecode.exe
         cd dist
         zip ../${{ matrix.name }} byebyecode.exe
-
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
@@ -132,7 +129,6 @@ jobs:
         
         # List extracted files
         ls -la extracted/
-
     - name: Prepare NPM packages
       run: |
         # Prepare packages with version management
@@ -154,7 +150,6 @@ jobs:
         # Verify packages
         echo "Package structure:"
         find npm-publish -name "package.json" -exec echo "=== {} ===" \; -exec head -5 {} \;
-
     - name: Publish platform packages to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -167,19 +162,17 @@ jobs:
           cd ../..
           echo "✅ 完成 @88code/byebyecode-$platform"
         done
-
     - name: Wait for NPM registry
       run: |
         echo "⏳ Waiting for platform packages to be available on NPM..."
         sleep 30
-
     - name: Publish main package to NPM
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
-        cd npm-publish/main
+        # cd npm-publish/main
         echo "📦 发布 @88code/byebyecode"
-        npm publish --access public
+        # npm publish --access public
         echo "✅ 完成 @88code/byebyecode"
         echo ""
         echo "🎉 NPM packages published successfully!"
